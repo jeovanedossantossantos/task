@@ -2,9 +2,13 @@ import { Platform } from "react-native"
 import styled from "styled-components/native"
 import commonStyles from "../../commonStyles"
 
+
 export const Container = styled.View`
 
+    font-family:  sans-serif  ;
+
     flex: 1;
+    
 
     
 `
@@ -30,6 +34,8 @@ export const TitleBar = styled(Container)`
 `
 
 export const Title = styled.Text`
+
+   
 
     
     color: ${commonStyles.colors.secondary};
