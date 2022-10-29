@@ -4,14 +4,15 @@ import commonStyles from "../../commonStyles"
 
 export const Container = styled.View`
 
-    flex-direction: column;
+    flex-direction: row;
     flex-wrap: wrap;
     border-color: #AAA;
     border-bottom-width: 1;
     align-items: center;
-    padding-top: 10px;
-    padding-bottom: 10px;
+
+    padding: 10px;
     background-color: #FFF;
+    border-bottom-width:1px;
 
 `
 

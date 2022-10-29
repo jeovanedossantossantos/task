@@ -56,9 +56,9 @@ export const IconBar = styled.View`
 
         flex-direction: row;
         margin-left: 20px;
-        margin-right: 20px;
-        justify-content: space-between;
-        margin-top: ${Platform.OS === 'ios' ? 40 : 20};
+        margin-right: -20px;
+        justify-content: flex-end;
+        margin-top: ${Platform.OS === 'ios' ? 40 : 30};
 
 `
 
