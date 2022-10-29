@@ -5,7 +5,7 @@ import todayImage from "../../assets/imgs/today.jpg"
 import * as Styles from "./TaskList.style"
 
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-import { faDeleteLeft, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 import moment from 'moment'
 import 'moment/locale/pt-br'
 import Task from "../../components/Task";
@@ -54,19 +54,24 @@ const TaskList = () => {
 
     const today = moment().locale('pt-br').format('ddd, D [de] MMMM')
 
-    const toggleFilter = () => {
-        setState({ ...state, showDoneTasks: !state.showDoneTasks })
-    }
+
 
     const filterTasks = () => {
         let visibleTasks: TaskProps[] = []
         if (state.showDoneTasks) {
             visibleTasks = [...state.tasks]
         } else {
-            const pending = (task: TaskProps) => task.doneAt === null
+            const pending = (task: TaskProps) => task.doneAt === undefined
             visibleTasks = state.tasks.filter(pending)
         }
         setState({ ...state, visibleTasks: visibleTasks })
+
+    }
+
+    const toggleFilter = () => {
+        setState({ ...state, showDoneTasks: !state.showDoneTasks })
+
+
     }
 
 
@@ -77,6 +82,7 @@ const TaskList = () => {
             if (task.id === id) {
                 task.doneAt = task.doneAt ? undefined : new Date()
                 setState({ ...state, tasks: tasks })
+                filterTasks()
             }
 
         }
@@ -87,7 +93,8 @@ const TaskList = () => {
 
     useEffect(() => {
         filterTasks()
-    }, [])
+    }, [state.showDoneTasks])
+
 
 
     return (
