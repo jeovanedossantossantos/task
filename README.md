@@ -1,6 +1,6 @@
 # Configurações 
 
-### Instalando o @fortawesome
+### Instalando o Fortawesome
 
         yarn add react-native-svg @fortawesome/fontawesome-svg-core @fortawesome/free-solid-svg-icons @fortawesome/react-native-fontawesome
 
