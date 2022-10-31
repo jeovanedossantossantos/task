@@ -11,6 +11,7 @@ import 'moment/locale/pt-br'
 import Task from "../../components/Task";
 import { FlatList } from "react-native";
 import commonStyles from "../../commonStyles"
+import AddTask from "../AddTask";
 interface TaskProps {
     id: number;
     desc: string;
@@ -27,7 +28,7 @@ interface InitialState {
 
 const initialState: InitialState = {
     showDoneTasks: true,
-    showAddTask: false,
+    showAddTask: true,
     visibleTasks: [],
     tasks: [
         {
@@ -99,6 +100,11 @@ const TaskList = () => {
 
     return (
         <Styles.Container>
+            <AddTask
+                isVisible={!state.showAddTask}
+                onCancel={() => setState({ ...state, showAddTask: state.showAddTask })}
+
+            />
             <Styles.Background source={todayImage}>
                 <Styles.IconBar>
                     <Styles.AddButton onPress={toggleFilter}>
