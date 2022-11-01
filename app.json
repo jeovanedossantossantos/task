@@ -3,6 +3,7 @@
     "name": "task",
     "slug": "task",
     "version": "1.0.0",
+    "userInterfaceStyle": "automatic",
     "assetBundlePatterns": [
       "**/*"
     ],

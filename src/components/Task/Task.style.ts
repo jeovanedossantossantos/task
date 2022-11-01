@@ -70,6 +70,7 @@ export const Left = styled.View`
     background-color: red;
     flex-direction: row;
     align-items: center;
+    padding-left:10px;
 
 `
 

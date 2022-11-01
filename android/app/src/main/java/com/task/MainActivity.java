@@ -1,4 +1,4 @@
-package com.task;
+ package com.task;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -9,7 +9,25 @@ import com.facebook.react.ReactRootView;
 
 import expo.modules.ReactActivityDelegateWrapper;
 
+import com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView;
+
+
 public class MainActivity extends ReactActivity {
+
+  @Override
+  protected String getMainComponentName() {
+    return "task";
+  }
+
+  @Override
+  protected ReactActivityDelegate createReactActivityDelegate() {
+    return new ReactActivityDelegate(this, getMainComponentName()) {
+      @Override
+      protected ReactRootView createRootView() {
+          return new RNGestureHandlerEnabledRootView(MainActivity.this);
+      }
+    };
+  }
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     // Set the theme to AppTheme BEFORE onCreate to support 
@@ -39,6 +57,15 @@ public class MainActivity extends ReactActivity {
       new MainActivityDelegate(this, getMainComponentName())
     );
   }
+  @Override
+    protected ReactActivityDelegate createReactActivityDelegate() {
+        return new ReactActivityDelegate(this, getMainComponentName()) {
+            @Override
+            protected ReactRootView createRootView() {
+                return new RNGestureHandlerEnabledRootView(MainActivity.this);
+            }
+        };
+    }
 
   /**
    * Align the back button behavior with Android S
@@ -80,4 +107,7 @@ public class MainActivity extends ReactActivity {
       return BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
     }
   }
+  
 }
+
+

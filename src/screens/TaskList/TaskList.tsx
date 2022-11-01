@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from "react";
+import { Alert, FlatList, TouchableOpacity } from "react-native";
 
-import todayImage from "../../assets/imgs/today.jpg"
+import AsyncStorage from "@react-native-async-storage/async-storage"
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { faEye, faEyeSlash, faPlus } from '@fortawesome/free-solid-svg-icons'
+import moment from 'moment'
+import 'moment/locale/pt-br'
 
 import * as Styles from "./TaskList.style"
 
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
-import moment from 'moment'
-import 'moment/locale/pt-br'
 import Task from "../../components/Task";
-import { FlatList } from "react-native";
 import commonStyles from "../../commonStyles"
 import AddTask from "../AddTask";
+import { NewTaskProps } from "../../global/interface/types";
+import todayImage from "../../assets/imgs/today.jpg"
+
+
 interface TaskProps {
     id: number;
     desc: string;
@@ -28,24 +32,9 @@ interface InitialState {
 
 const initialState: InitialState = {
     showDoneTasks: true,
-    showAddTask: true,
+    showAddTask: false,
     visibleTasks: [],
-    tasks: [
-        {
-            id: Math.random(),
-            desc: "Compra Livro de React Native",
-            estimateAt: new Date(),
-            doneAt: new Date(),
-
-        },
-        {
-            id: Math.random(),
-            desc: "Compra Livro de React Native",
-            estimateAt: new Date(),
-            doneAt: undefined,
-
-        }
-    ]
+    tasks: []
 }
 
 
@@ -54,6 +43,16 @@ const TaskList = () => {
     const [state, setState] = useState<InitialState>(initialState)
 
     const today = moment().locale('pt-br').format('ddd, D [de] MMMM')
+
+
+    const loader = async () => {
+        const stateString = await AsyncStorage.getItem("tasksState")
+
+        const state = stateString ? JSON.parse(stateString) : initialState
+        setState(state)
+
+
+    }
 
 
 
@@ -66,6 +65,7 @@ const TaskList = () => {
             visibleTasks = state.tasks.filter(pending)
         }
         setState({ ...state, visibleTasks: visibleTasks })
+        AsyncStorage.setItem("tasksState", JSON.stringify(state))
 
     }
 
@@ -92,27 +92,64 @@ const TaskList = () => {
 
     }
 
+    const addTask = (newTask: NewTaskProps) => {
+        if (!newTask.desc || !newTask.desc.trim()) {
+            Alert.alert("Dados Inválidos", "Descrição não informada!")
+            return
+
+        }
+
+        const tasks = [...state.tasks]
+        tasks.push({
+            id: Math.random(),
+            desc: newTask.desc,
+            estimateAt: newTask.date,
+            doneAt: undefined
+        })
+        setState({ ...state, tasks: tasks, showDoneTasks: false, showAddTask: false })
+
+
+    }
+    const deleteTask = (id: number) => {
+
+        const tasks = state.tasks.filter(task => task.id !== id)
+        setState({ ...state, tasks: tasks })
+
+    }
+
+    useEffect(() => {
+        loader()
+    }, [])
+
     useEffect(() => {
         filterTasks()
-    }, [state.showDoneTasks])
+    }, [state.showDoneTasks, state.tasks])
+
+
 
 
 
     return (
         <Styles.Container>
             <AddTask
-                isVisible={!state.showAddTask}
-                onCancel={() => setState({ ...state, showAddTask: state.showAddTask })}
+                onCancel={() => setState({
+                    ...state, showAddTask:
+                        false
+                })}
+                onSave={addTask}
+                isVisible={state.showAddTask}
+
+
 
             />
             <Styles.Background source={todayImage}>
                 <Styles.IconBar>
-                    <Styles.AddButton onPress={toggleFilter}>
+                    <TouchableOpacity onPress={toggleFilter}>
                         <FontAwesomeIcon
                             icon={state.showDoneTasks ? faEye : faEyeSlash}
                             color={commonStyles.colors.secondary}
                             size={20} />
-                    </Styles.AddButton>
+                    </TouchableOpacity>
                 </Styles.IconBar>
                 <Styles.TitleBar>
                     <Styles.Title>Hoje</Styles.Title>
@@ -129,9 +166,17 @@ const TaskList = () => {
                 <FlatList
                     data={state.visibleTasks}
                     keyExtractor={item => `${item.id}`}
-                    renderItem={({ item }) => <Task {...item} toggleTask={toggleTask} />}
+                    renderItem={
+                        ({ item }) =>
+                            <Task {...item} toggleTask={toggleTask} onDelete={deleteTask} />}
                 />
             </Styles.TaskList>
+
+            <Styles.AddButton
+                activeOpacity={0.7}
+                onPress={() => setState({ ...state, showAddTask: true })}>
+                <FontAwesomeIcon icon={faPlus} size={20} color={commonStyles.colors.secondary} />
+            </Styles.AddButton>
 
 
 

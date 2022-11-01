@@ -1,16 +1,19 @@
 import React, { useState } from "react";
-import { Modal, Text, TouchableWithoutFeedback } from "react-native";
+import { Modal, Platform, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import * as Styles from "./AddTask.style"
+import DateTimerPicker from "@react-native-community/datetimepicker"
+import moment from "moment";
+import { NewTaskProps } from "../../global/interface/types";
 
-interface AddTaskProps {
-    desc: string;
-    date: Date;
+
+interface AddTaskProps extends NewTaskProps {
     showDatePicker: boolean;
 
 }
 interface AddTaskPropsTwo {
     isVisible: boolean;
-    onCancel?: () => void;
+    onCancel: () => void;
+    onSave?: (newTask: NewTaskProps) => void;
 
 }
 
@@ -21,8 +24,53 @@ const initialState: AddTaskProps = {
 
 }
 
+
 const AddTask = (props: AddTaskPropsTwo) => {
     const [state, setState] = useState<AddTaskProps>(initialState)
+
+    const save = () => {
+        const newTask: NewTaskProps = {
+            desc: state.desc,
+            date: state.date,
+        }
+        props.onSave ? props.onSave(newTask) : null
+        setState(initialState)
+    }
+
+    const showModal = (_: any, date?: Date) => {
+
+        setState({ ...state, date: date ? date : new Date(), showDatePicker: false })
+
+    }
+
+    const getDateTimePicker = () => {
+        let datePicker = <DateTimerPicker
+
+            value={state.date}
+            onChange={showModal}
+
+            mode='date'
+        />
+        const dateString = moment(state.date).format('ddd, D [de] MMMM [de] YYYY')
+
+        if (Platform.OS === 'android') {
+            datePicker = (
+                <View>
+                    <TouchableOpacity onPress={() => setState({ ...state, showDatePicker: true })}>
+                        <Styles.Date>
+                            {dateString}
+                        </Styles.Date>
+                    </TouchableOpacity>
+                    {state.showDatePicker ? datePicker : null}
+                </View>
+            )
+        }
+
+
+
+        return datePicker
+    }
+
     return (
         <Modal
             transparent={true}
@@ -36,6 +84,7 @@ const AddTask = (props: AddTaskPropsTwo) => {
 
                 <Styles.Background>
 
+
                 </Styles.Background>
 
             </TouchableWithoutFeedback>
@@ -43,9 +92,19 @@ const AddTask = (props: AddTaskPropsTwo) => {
 
             <Styles.Container>
 
-                <Styles.Header>
+                <Styles.Header>Nova Tarefa</Styles.Header>
+                <Styles.Input
+                    placeholder="Descrição"
+                    value={state.desc}
+                    onChangeText={(e: string) => setState({ ...state, desc: e })}
 
-                </Styles.Header>
+                />
+                {getDateTimePicker()}
+                <Styles.Buttons>
+                    <TouchableOpacity onPress={props.onCancel}><Styles.Button>Cancelar</Styles.Button></TouchableOpacity>
+                    <TouchableOpacity onPress={save}><Styles.Button>Salvar</Styles.Button></TouchableOpacity>
+
+                </Styles.Buttons>
 
             </Styles.Container>
 

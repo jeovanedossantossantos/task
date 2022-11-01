@@ -2,17 +2,17 @@ import { faCheck, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import moment from "moment";
 import React from "react";
-import { TouchableWithoutFeedback, View } from "react-native";
-
-import Swipeable from 'react-native-gesture-handler/Swipeable'
+import { StyleSheet, TouchableWithoutFeedback, View, } from "react-native";
 import * as Styles from "./Task.style"
+import { Swipeable, GestureHandlerRootView } from 'react-native-gesture-handler';
 
 interface TaskProps {
     id: number;
     desc: string;
     estimateAt: Date;
     doneAt?: Date;
-    toggleTask?: (id: number) => void;
+    toggleTask: (id: number) => void;
+    onDelete: (id: number) => void;
 
 }
 
@@ -27,8 +27,10 @@ const Task = (props: TaskProps) => {
 
     const getRightContent = () => {
         return (
-            <Styles.Rigth>
-                <FontAwesomeIcon icon={faTrash} size={20} color='#FFF' />
+            <Styles.Rigth
+                onPress={() => props.onDelete ? props.onDelete(props.id) : null}
+            >
+                <FontAwesomeIcon icon={faTrash} size={30} color='#FFF' />
             </Styles.Rigth >
         )
     }
@@ -63,36 +65,46 @@ const Task = (props: TaskProps) => {
 
     return (
 
-        <Swipeable
-            renderRightActions={getRightContent}
-            renderLeftActions={getLeftContent}
+        <GestureHandlerRootView>
+            <Swipeable
 
-        >
-            <Styles.Container>
-                <TouchableWithoutFeedback
-                    onPress={() => props.toggleTask(props.id)}
-                >
-
-                    <Styles.CheckContainer>
-
-                        {getCheckView(props.doneAt)}
-
-                    </Styles.CheckContainer>
-
-                </TouchableWithoutFeedback>
-                <View>
-                    <Styles.Desc style={doneOrNotStyle}>{props.desc}</Styles.Desc>
-                    <Styles.DateStyle>{formattedDate}</Styles.DateStyle>
+                renderRightActions={getRightContent}
+                renderLeftActions={getLeftContent}
+                onSwipeableLeftOpen={() => props.onDelete ? props.onDelete(props.id) : null}
 
 
-                </View>
+            >
+                <Styles.Container>
+                    <TouchableWithoutFeedback
+                        onPress={() => props.toggleTask(props.id)}
+                    >
+
+                        <Styles.CheckContainer>
+
+                            {getCheckView(props.doneAt)}
+
+                        </Styles.CheckContainer>
+
+                    </TouchableWithoutFeedback>
+                    <View>
+                        <Styles.Desc style={doneOrNotStyle}>{props.desc}</Styles.Desc>
+                        <Styles.DateStyle>{formattedDate}</Styles.DateStyle>
 
 
-            </Styles.Container>
-        </Swipeable>
+                    </View>
+
+
+                </Styles.Container>
+            </Swipeable>
+        </GestureHandlerRootView>
 
     )
 }
 
+const style = StyleSheet.create({
+    buttonContainer: {
+        flexDirection: 'row'
+    },
+})
 
 export default Task

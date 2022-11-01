@@ -8,6 +8,7 @@ export const Container = styled.View`
     font-family:  sans-serif  ;
 
     flex: 1;
+   
     
 
     
@@ -17,6 +18,7 @@ export const Background = styled.ImageBackground`
     flex: 3;
  
     
+    
    
 
 `
@@ -24,6 +26,7 @@ export const Background = styled.ImageBackground`
 export const TaskList = styled.View`
 
     flex: 7;
+   
 
 `
 
@@ -55,8 +58,8 @@ export const Subtitles = styled(Title)`
 export const IconBar = styled.View`
 
         flex-direction: row;
-        margin-left: 20px;
-        margin-right: -20px;
+        /* margin-left: 20px; */
+        margin-right: 20px;
         justify-content: flex-end;
         margin-top: ${Platform.OS === 'ios' ? 40 : 30};
 
@@ -64,7 +67,7 @@ export const IconBar = styled.View`
 
 export const AddButton = styled.TouchableOpacity`
 
-        /* position: absolute; */
+        position: absolute;
         right: 30px;
         bottom: 30px;
         width: 50px;
@@ -72,6 +75,7 @@ export const AddButton = styled.TouchableOpacity`
         border-radius: 25px;
         justify-content: center;
         align-items: center;
+        background-color:${commonStyles.colors.today}
 
 `
 
